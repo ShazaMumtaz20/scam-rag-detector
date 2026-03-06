@@ -1,163 +1,223 @@
-🛡️ Scam RAG Detector
+<h1 align="center">🛡️ Scam RAG Detector</h1>
 
-An AI-powered scam detection assistant built using Retrieval-Augmented Generation (RAG).
+<p align="center">
+AI-powered scam detection assistant using <b>Retrieval Augmented Generation (RAG)</b>.
+<br>
+Paste any suspicious message and get an instant risk analysis.
+</p>
 
-Paste any suspicious message and the system performs semantic search + LLM reasoning to determine if it looks like a scam.
+<hr>
 
-🚀 Example
+<h2>🚀 Demo</h2>
 
-Input message:
+<p><b>Input Message</b></p>
 
-Congratulations! You've won a $1000 gift card. Click here to claim before it expires!
+<pre>
+Congratulations! You've won a $1000 gift card.
+Click here to claim before it expires!
+</pre>
 
-Output:
+<p><b>Output</b></p>
 
+<pre>
 Is this a scam? YES
 Risk Level: HIGH
+Reason: Uses urgency tactics and unrealistic rewards — common phishing pattern.
+</pre>
 
-Reason:
-Uses urgency tactics and unrealistic rewards — common phishing patterns.
+<hr>
 
-🧠 How The System Works
-spam.txt → ingest.py → FAISS vector database
+<h2>🧠 How It Works</h2>
+
+<pre>
+spam.txt  →  ingest.py  →  FAISS vector DB
                                ↓
-User message → similarity search → LLM analysis → risk report
+user message → similarity search → LLM (Groq) → risk analysis
+</pre>
 
-Step 1 — Ingest
+<ol>
+<li><b>Ingest</b> – Loads spam messages and converts them into embeddings</li>
+<li><b>Store</b> – Saves embeddings in a FAISS vector database</li>
+<li><b>Retrieve</b> – Finds similar scam patterns</li>
+<li><b>Analyze</b> – LLM explains whether the message is a scam</li>
+</ol>
 
-ingest.py loads known scam messages and converts them into embeddings.
+<hr>
 
-These embeddings are stored inside a FAISS vector database.
+<h2>📁 Project Structure</h2>
 
-Step 2 — Retrieve
-
-When a user pastes a new message, the system finds the most similar scam patterns from the database.
-
-Step 3 — Analyze
-
-An LLM analyzes the message against those patterns and produces a human-readable risk explanation.
-
-📁 Project Structure
+<pre>
 Scam RAG/
 │
-├── app.py
-├── rag.py
-├── ingest.py
-├── spam.txt
-│
-├── vector_db/
-│
+├── app.py            # Streamlit UI
+├── rag.py            # Retrieval + LLM logic
+├── ingest.py         # Build vector database
+├── spam.txt          # Spam dataset
+├── vector_db/        # FAISS index (generated)
 ├── requirements.txt
 ├── .env
 └── .gitignore
+</pre>
 
-File descriptions
+<hr>
 
-app.py
+<h2>⚙️ Setup</h2>
 
-Streamlit interface where users paste suspicious messages.
+<h3>1. Clone Repository</h3>
 
-rag.py
-
-Handles retrieval + LLM reasoning.
-
-ingest.py
-
-Reads the dataset and builds the FAISS vector database.
-
-spam.txt
-
-Dataset of labeled SMS messages.
-
-vector_db/
-
-Automatically created after running ingest.py.
-
-.env
-
-Stores API keys.
-
-⚙️ Setup
-1. Clone the repository
+<pre>
 git clone https://github.com/ShazaMumtaz20/scam-rag-detector.git
 cd scam-rag-detector
+</pre>
 
-2. Create a virtual environment
+<h3>2. Create Virtual Environment</h3>
+
+<pre>
 python -m venv venv
+</pre>
 
+<h3>Activate (Windows)</h3>
 
-Activate it:
-
-Windows
+<pre>
 venv\Scripts\activate
+</pre>
 
-Mac / Linux
-source venv/bin/activate
+<h3>3. Install Dependencies</h3>
 
-3. Install dependencies
+<pre>
 pip install -r requirements.txt
+</pre>
 
-4. Add your Groq API key
+<hr>
 
-Get a free key from:
+<h2>🔑 Add Groq API Key</h2>
 
-https://console.groq.com
+<p>Get a free key from:</p>
 
-Create a .env file:
+<p>
+<a href="https://console.groq.com">https://console.groq.com</a>
+</p>
 
+<p>Create a <b>.env</b> file:</p>
+
+<pre>
 GROQ_API_KEY=your-key-here
+</pre>
 
-5. Build the vector database
+<p>Or set it manually:</p>
 
-Run:
+<pre>
+# Windows
+$env:GROQ_API_KEY="your-key-here"
 
+# Mac/Linux
+export GROQ_API_KEY="your-key-here"
+</pre>
+
+<hr>
+
+<h2>📦 Build Vector Database</h2>
+
+<pre>
 python ingest.py
+</pre>
 
+<hr>
 
-This creates the FAISS vector database inside vector_db/.
+<h2>▶ Run the Application</h2>
 
-6. Run the application
+<pre>
 streamlit run app.py
+</pre>
 
+<p>Open in browser:</p>
 
-Open in browser:
-
+<pre>
 http://localhost:8501
+</pre>
 
-🧰 Tech Stack
-Tool	Purpose
-Streamlit	Web interface
-FAISS	Vector similarity search
-sentence-transformers	Embedding model
-langchain-huggingface	Embedding integration
-langchain-community	FAISS integration
-langchain-text-splitters	Text chunking
-Groq	LLM inference
-📄 Dataset Format
+<hr>
 
-The dataset is tab-separated:
+<h2>🧰 Tech Stack</h2>
 
-ham    Hey, are you free tomorrow?
-spam   You have been selected for a FREE iPhone. Claim now!
+<table>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
 
+<tr>
+<td>Streamlit</td>
+<td>Web Interface</td>
+</tr>
 
-Only spam rows are indexed in the vector database.
+<tr>
+<td>FAISS</td>
+<td>Vector Similarity Search</td>
+</tr>
 
-⚠️ Important Notes
+<tr>
+<td>LangChain</td>
+<td>RAG Pipeline</td>
+</tr>
 
-.env and vector_db/ are not pushed to GitHub
+<tr>
+<td>HuggingFace</td>
+<td>Embeddings (all-MiniLM-L6-v2)</td>
+</tr>
 
-Run ingest.py locally to regenerate the vector database
+<tr>
+<td>Groq</td>
+<td>LLM Inference</td>
+</tr>
 
-Embeddings run locally for free
+<tr>
+<td>Sentence Transformers</td>
+<td>Text Embeddings</td>
+</tr>
 
-Only the LLM call uses the Groq API
+</table>
 
-📜 License
+<hr>
 
-MIT License
+<h2>📄 Dataset Format</h2>
 
-© Shaza Mumtaz
+<p><b>spam.txt</b> must be tab separated:</p>
 
-GitHub:
-https://github.com/ShazaMumtaz20
+<pre>
+ham	Hey, are you free tomorrow?
+spam	You have been selected for a FREE iPhone. Claim now!
+</pre>
+
+<p>Only <b>spam</b> rows are indexed into the vector database.</p>
+
+<hr>
+
+<h2>⚠️ Notes</h2>
+
+<ul>
+<li><b>.env</b> and <b>vector_db</b> are excluded from GitHub</li>
+<li>Run <b>ingest.py</b> locally to regenerate the database</li>
+<li>Groq free tier may have rate limits</li>
+<li>Embeddings run locally</li>
+</ul>
+
+<hr>
+
+<h2>📜 License</h2>
+
+<p>MIT License</p>
+
+<p>
+© <a href="https://github.com/ShazaMumtaz20">Shaza Mumtaz</a>
+</p>
+
+<hr>
+
+<h2>📌 TL;DR</h2>
+
+<p>
+This project builds an AI system that detects scam messages using 
+<b>RAG (Retrieval Augmented Generation)</b>. 
+It searches a database of known scams and uses an LLM to explain whether the message is suspicious.
+</p>
