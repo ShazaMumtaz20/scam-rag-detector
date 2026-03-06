@@ -1,0 +1,142 @@
+# 🛡️ Scam RAG Detector
+
+An AI-powered scam detection assistant built with RAG (Retrieval-Augmented Generation). Paste any suspicious message and get an instant risk analysis powered by semantic search + an LLM.
+
+---
+
+## 🚀 Demo
+
+> *"Congratulations! You've won a $1000 gift card. Click here to claim before it expires!"*
+
+```
+✅ Is this a scam? YES
+⚠️  Risk Level: HIGH
+💬 Why: Uses urgency tactics and unrealistic rewards — classic phishing pattern.
+```
+
+---
+
+## 🧠 How It Works
+
+```
+spam.txt  →  ingest.py  →  FAISS vector DB
+                                  ↓
+user message  →  similarity search  →  LLM (Groq)  →  risk analysis
+```
+
+1. **Ingest** — Loads known spam messages, splits them into chunks, and stores them as embeddings in a FAISS vector database
+2. **Retrieve** — Finds the most semantically similar scam patterns for any new message
+3. **Analyze** — An LLM analyzes the message against those patterns and returns a plain-English risk report
+
+---
+
+## 📁 Project Structure
+
+```
+Scam RAG/
+├── app.py            # Streamlit web UI
+├── rag.py            # Retrieval + LLM analysis logic
+├── ingest.py         # Builds the FAISS vector database
+├── spam.txt          # Tab-separated spam dataset (label \t message)
+├── vector_db/        # Auto-generated FAISS index (after running ingest.py)
+├── requirements.txt  # Python dependencies
+├── .env              # Your API keys (never committed)
+└── .gitignore
+```
+
+---
+
+## ⚙️ Setup
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/ShazaMumtaz20/scam-rag-detector.git
+cd scam-rag-detector
+```
+
+### 2. Create and activate a virtual environment
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Mac/Linux
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Add your Groq API key
+
+Get a free key at [console.groq.com](https://console.groq.com) — no credit card needed.
+
+Create a `.env` file in the project root:
+```
+GROQ_API_KEY=your-key-here
+```
+
+Then set it in your terminal before running:
+```powershell
+# Windows
+$env:GROQ_API_KEY="your-key-here"
+
+# Mac/Linux
+export GROQ_API_KEY="your-key-here"
+```
+
+### 5. Build the vector database
+```bash
+python ingest.py
+```
+
+### 6. Launch the app
+```bash
+streamlit run app.py
+```
+
+Open [http://localhost:8501](http://localhost:8501) in your browser.
+
+---
+
+## 🧰 Tech Stack
+
+| Tool | Purpose |
+|------|---------|
+| `streamlit` | Web UI |
+| `faiss-cpu` | Vector similarity search |
+| `langchain-huggingface` | Local embeddings (`all-MiniLM-L6-v2`) |
+| `langchain-community` | FAISS integration |
+| `langchain-text-splitters` | Text chunking |
+| `groq` | Free LLM inference |
+| `sentence-transformers` | Embedding model |
+
+---
+
+## 📄 Dataset Format
+
+`spam.txt` should be tab-separated with two columns:
+
+```
+ham	Hey, are you free tomorrow?
+spam	You have been selected for a FREE iPhone. Claim now!
+```
+
+Only `spam` rows are indexed into the vector database.
+
+---
+
+## ⚠️ Notes
+
+- `vector_db/` and `.env` are excluded from git — run `ingest.py` locally to regenerate the database
+- Groq's free tier has rate limits — if you hit them, wait a moment and retry
+- Embeddings run **locally** for free — only the LLM call uses the Groq API
+
+---
+
+## 📜 License
+
+MIT © [Shaza Mumtaz](https://github.com/ShazaMumtaz20)
