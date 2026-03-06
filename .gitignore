@@ -14,3 +14,4 @@ __pycache__/
 **3. Create a `.env` file for your API key** (so you never hardcode it):
 ```
 GROQ_API_KEY=your-key-here
+Add-Content .gitignore "`n.env"
