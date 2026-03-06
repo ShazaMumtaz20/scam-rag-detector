@@ -1,142 +1,163 @@
-# 🛡️ Scam RAG Detector
+🛡️ Scam RAG Detector
 
-An AI-powered scam detection assistant built with RAG (Retrieval-Augmented Generation). Paste any suspicious message and get an instant risk analysis powered by semantic search + an LLM.
+An AI-powered scam detection assistant built using Retrieval-Augmented Generation (RAG).
 
----
+Paste any suspicious message and the system performs semantic search + LLM reasoning to determine if it looks like a scam.
 
-## 🚀 Demo
+🚀 Example
 
-> *"Congratulations! You've won a $1000 gift card. Click here to claim before it expires!"*
+Input message:
 
-```
-✅ Is this a scam? YES
-⚠️  Risk Level: HIGH
-💬 Why: Uses urgency tactics and unrealistic rewards — classic phishing pattern.
-```
+Congratulations! You've won a $1000 gift card. Click here to claim before it expires!
 
----
+Output:
 
-## 🧠 How It Works
+Is this a scam? YES
+Risk Level: HIGH
 
-```
-spam.txt  →  ingest.py  →  FAISS vector DB
-                                  ↓
-user message  →  similarity search  →  LLM (Groq)  →  risk analysis
-```
+Reason:
+Uses urgency tactics and unrealistic rewards — common phishing patterns.
 
-1. **Ingest** — Loads known spam messages, splits them into chunks, and stores them as embeddings in a FAISS vector database
-2. **Retrieve** — Finds the most semantically similar scam patterns for any new message
-3. **Analyze** — An LLM analyzes the message against those patterns and returns a plain-English risk report
+🧠 How The System Works
+spam.txt → ingest.py → FAISS vector database
+                               ↓
+User message → similarity search → LLM analysis → risk report
 
----
+Step 1 — Ingest
 
-## 📁 Project Structure
+ingest.py loads known scam messages and converts them into embeddings.
 
-```
+These embeddings are stored inside a FAISS vector database.
+
+Step 2 — Retrieve
+
+When a user pastes a new message, the system finds the most similar scam patterns from the database.
+
+Step 3 — Analyze
+
+An LLM analyzes the message against those patterns and produces a human-readable risk explanation.
+
+📁 Project Structure
 Scam RAG/
-├── app.py            # Streamlit web UI
-├── rag.py            # Retrieval + LLM analysis logic
-├── ingest.py         # Builds the FAISS vector database
-├── spam.txt          # Tab-separated spam dataset (label \t message)
-├── vector_db/        # Auto-generated FAISS index (after running ingest.py)
-├── requirements.txt  # Python dependencies
-├── .env              # Your API keys (never committed)
+│
+├── app.py
+├── rag.py
+├── ingest.py
+├── spam.txt
+│
+├── vector_db/
+│
+├── requirements.txt
+├── .env
 └── .gitignore
-```
 
----
+File descriptions
 
-## ⚙️ Setup
+app.py
 
-### 1. Clone the repo
-```bash
+Streamlit interface where users paste suspicious messages.
+
+rag.py
+
+Handles retrieval + LLM reasoning.
+
+ingest.py
+
+Reads the dataset and builds the FAISS vector database.
+
+spam.txt
+
+Dataset of labeled SMS messages.
+
+vector_db/
+
+Automatically created after running ingest.py.
+
+.env
+
+Stores API keys.
+
+⚙️ Setup
+1. Clone the repository
 git clone https://github.com/ShazaMumtaz20/scam-rag-detector.git
 cd scam-rag-detector
-```
 
-### 2. Create and activate a virtual environment
-```bash
+2. Create a virtual environment
 python -m venv venv
 
-# Windows
+
+Activate it:
+
+Windows
 venv\Scripts\activate
 
-# Mac/Linux
+Mac / Linux
 source venv/bin/activate
-```
 
-### 3. Install dependencies
-```bash
+3. Install dependencies
 pip install -r requirements.txt
-```
 
-### 4. Add your Groq API key
+4. Add your Groq API key
 
-Get a free key at [console.groq.com](https://console.groq.com) — no credit card needed.
+Get a free key from:
 
-Create a `.env` file in the project root:
-```
+https://console.groq.com
+
+Create a .env file:
+
 GROQ_API_KEY=your-key-here
-```
 
-Then set it in your terminal before running:
-```powershell
-# Windows
-$env:GROQ_API_KEY="your-key-here"
+5. Build the vector database
 
-# Mac/Linux
-export GROQ_API_KEY="your-key-here"
-```
+Run:
 
-### 5. Build the vector database
-```bash
 python ingest.py
-```
 
-### 6. Launch the app
-```bash
+
+This creates the FAISS vector database inside vector_db/.
+
+6. Run the application
 streamlit run app.py
-```
 
-Open [http://localhost:8501](http://localhost:8501) in your browser.
 
----
+Open in browser:
 
-## 🧰 Tech Stack
+http://localhost:8501
 
-| Tool | Purpose |
-|------|---------|
-| `streamlit` | Web UI |
-| `faiss-cpu` | Vector similarity search |
-| `langchain-huggingface` | Local embeddings (`all-MiniLM-L6-v2`) |
-| `langchain-community` | FAISS integration |
-| `langchain-text-splitters` | Text chunking |
-| `groq` | Free LLM inference |
-| `sentence-transformers` | Embedding model |
+🧰 Tech Stack
+Tool	Purpose
+Streamlit	Web interface
+FAISS	Vector similarity search
+sentence-transformers	Embedding model
+langchain-huggingface	Embedding integration
+langchain-community	FAISS integration
+langchain-text-splitters	Text chunking
+Groq	LLM inference
+📄 Dataset Format
 
----
+The dataset is tab-separated:
 
-## 📄 Dataset Format
+ham    Hey, are you free tomorrow?
+spam   You have been selected for a FREE iPhone. Claim now!
 
-`spam.txt` should be tab-separated with two columns:
 
-```
-ham	Hey, are you free tomorrow?
-spam	You have been selected for a FREE iPhone. Claim now!
-```
+Only spam rows are indexed in the vector database.
 
-Only `spam` rows are indexed into the vector database.
+⚠️ Important Notes
 
----
+.env and vector_db/ are not pushed to GitHub
 
-## ⚠️ Notes
+Run ingest.py locally to regenerate the vector database
 
-- `vector_db/` and `.env` are excluded from git — run `ingest.py` locally to regenerate the database
-- Groq's free tier has rate limits — if you hit them, wait a moment and retry
-- Embeddings run **locally** for free — only the LLM call uses the Groq API
+Embeddings run locally for free
 
----
+Only the LLM call uses the Groq API
 
-## 📜 License
+📜 License
 
-MIT © [Shaza Mumtaz](https://github.com/ShazaMumtaz20)
+MIT License
+
+© Shaza Mumtaz
+
+GitHub:
+https://github.com/ShazaMumtaz20
